@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export function createEnv<T extends z.ZodType>(schema: T, source: Record<string, string | undefined> = process.env): z.infer<T> {
+export function createEnv<T extends z.ZodType>(
+  schema: T,
+  source: Record<string, string | undefined> = process.env,
+): z.infer<T> {
   const result = schema.safeParse(source);
 
   if (!result.success) {

@@ -7,10 +7,19 @@
   ],
   "scripts": {
     "test": "bun test",
-    "check": "tsc --build"
+    "check": "tsc --build",
+    "lint": "eslint 'packages/**/*.{ts,tsx}'",
+    "lint:fix": "eslint 'packages/**/*.{ts,tsx}' --fix"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
     "bun-types": "latest",
-    "typescript": "^5.0.0"
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.4",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.49.0"
   }
 }
