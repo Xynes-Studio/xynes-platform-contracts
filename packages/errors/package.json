@@ -1,0 +1,9 @@
+{
+  "name": "@xynes/errors",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
