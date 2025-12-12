@@ -6,3 +6,4 @@ export * from './errors/NotFoundError';
 export * from './errors/ForbiddenError';
 export * from './errors/ConflictError';
 export * from './errors/InternalError';
+export * from './actions/cms-actions';
