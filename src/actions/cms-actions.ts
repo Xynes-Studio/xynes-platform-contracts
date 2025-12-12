@@ -29,3 +29,13 @@ export interface BlogEntryResponse {
     updatedAt: string;
   };
 }
+
+export interface BlogEntryListPublishedPayload {
+  limit?: number;
+  offset?: number;
+  tag?: string;
+}
+
+export interface BlogEntryGetPublishedBySlugPayload {
+  slug: string;
+}
