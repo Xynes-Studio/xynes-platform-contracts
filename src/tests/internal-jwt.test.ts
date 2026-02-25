@@ -3,7 +3,6 @@ import { createHmac } from "node:crypto";
 import {
   signInternalJwt,
   mapServiceKeyToAudience,
-  type ServiceKey,
   type InternalJwtPayload,
 } from "../security/internal-jwt";
 

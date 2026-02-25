@@ -39,3 +39,26 @@ export interface BlogEntryListPublishedPayload {
 export interface BlogEntryGetPublishedBySlugPayload {
   slug: string;
 }
+
+export interface CmsContentTypesListForWorkspacePayload {
+  includeTemplates?: boolean;
+}
+
+export interface CmsTemplateSummary {
+  id: string;
+  key: string;
+  name: string;
+  fieldsSchema: unknown;
+}
+
+export interface CmsContentTypeSummary {
+  id: string;
+  name: string;
+  slug: string;
+  routeSegment: string;
+  templateKey: string;
+  templateId?: string | null;
+  template?: CmsTemplateSummary | null;
+}
+
+export type CmsContentTypesListForWorkspaceResult = CmsContentTypeSummary[];

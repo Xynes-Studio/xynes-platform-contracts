@@ -7,6 +7,8 @@ import {
   ConflictError,
   InternalError,
   ActionRequestEnvelope,
+  CmsContentTypesListForWorkspacePayload,
+  CmsContentTypesListForWorkspaceResult,
 } from '../index';
 
 describe('Domain Errors', () => {
@@ -27,12 +29,9 @@ describe('Domain Errors', () => {
 
   it('should carry details and cause', () => {
     const details = { field: 'email', reason: 'invalid' };
-    const cause = new Error('Root cause');
     const error = new ValidationError('Invalid input', details);
-    
-    // @ts-ignore - access protected/private if needed, but here it's public readonly
+
     expect(error.details).toEqual(details);
-    // basic check
     expect(error.message).toBe('Invalid input');
   });
 });
@@ -55,5 +54,27 @@ describe('Action Contracts', () => {
     expect(envelope.actionKey).toBe('my.action');
     expect(envelope.payload.foo).toBe('hello');
     expect(envelope.payload.bar).toBe(123);
+  });
+
+  it('should type cms.content_types.listForWorkspace payload', () => {
+    const payload: CmsContentTypesListForWorkspacePayload = {
+      includeTemplates: true,
+    };
+
+    expect(payload.includeTemplates).toBe(true);
+  });
+
+  it('should type cms.content_types.listForWorkspace result', () => {
+    const result: CmsContentTypesListForWorkspaceResult = [
+      {
+        id: 'ct-1',
+        name: 'Blog',
+        slug: 'blog-post',
+        routeSegment: 'blog',
+        templateKey: 'blog_post',
+      },
+    ];
+
+    expect(result[0]?.routeSegment).toBe('blog');
   });
 });
