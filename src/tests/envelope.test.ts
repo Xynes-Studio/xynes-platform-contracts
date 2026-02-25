@@ -7,7 +7,6 @@ import {
   createValidationErrorResponse,
   generateRequestId,
   ApiSuccess,
-  ApiError,
 } from '../envelope';
 
 describe('Envelope Utilities', () => {
@@ -195,4 +194,3 @@ describe('Envelope Utilities', () => {
     });
   });
 });
-
