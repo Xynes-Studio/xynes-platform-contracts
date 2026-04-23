@@ -8,6 +8,7 @@ This library provides:
 
 1.  **Base Action Contracts**: Standard types for internal action handlers and envelopes.
 2.  **Error Hierarchy**: A unified `DomainError` system with standard HTTP-friendly subclasses (Validation, Not Found, Forbidden, etc.).
+3.  **CMS Contracts**: Directory-first `cms.entry.*` payload/result types for dashboard authoring, plus legacy content-type contracts for compatibility flows.
 
 It is designed to be:
 -   **Framework Agnostic**: No bindings to Hono, Express, or any DB.
@@ -72,6 +73,18 @@ const createDoc: ActionHandler<CreateDocPayload, CreateDocResult> = async (paylo
   return { id: '123' };
 };
 ```
+
+### 3. CMS Contracts
+
+- Directory-first authoring contracts are exported for `cms.entry.*` workflows:
+  - `WorkspaceContentEntry`
+  - `WorkspaceContentEntriesListPayload`
+  - `WorkspaceContentEntriesListResult`
+  - `WorkspaceContentEntryCreatePayload`
+  - `WorkspaceContentEntryUpdatePayload`
+- Legacy compatibility contracts remain exported for template/content-type flows:
+  - `BlogEntry*` types
+  - `CmsContentTypesListForWorkspace*` types
 
 ## Development
 

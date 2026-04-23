@@ -62,3 +62,74 @@ export interface CmsContentTypeSummary {
 }
 
 export type CmsContentTypesListForWorkspaceResult = CmsContentTypeSummary[];
+
+export type WorkspaceContentEntryStatus = "draft" | "published" | "archived";
+export type WorkspaceContentEntrySortBy = "date" | "title" | "popularity";
+export type WorkspaceContentEntrySortDirection = "asc" | "desc";
+
+export interface WorkspaceContentEntry {
+  id: string;
+  workspaceId: string;
+  directoryId: string | null;
+  title: string;
+  description: string;
+  body: unknown;
+  tags: string[];
+  ownerName: string | null;
+  avatarUrl: string | null;
+  status: WorkspaceContentEntryStatus;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  collaborators: string[];
+  isFavorite: boolean;
+}
+
+export interface WorkspaceContentEntriesListPayload {
+  directoryId?: string | null;
+  search?: string;
+  sortBy?: WorkspaceContentEntrySortBy;
+  sortDirection?: WorkspaceContentEntrySortDirection;
+  status?: WorkspaceContentEntryStatus | "all";
+  limit?: number;
+  offset?: number;
+}
+
+export interface WorkspaceContentEntriesListResult {
+  items: WorkspaceContentEntry[];
+  count: number;
+}
+
+export interface WorkspaceContentEntryCreatePayload {
+  directoryId?: string | null;
+  title: string;
+  description?: string;
+  body?: Record<string, unknown>;
+  tags?: string[];
+  ownerName?: string;
+  avatarUrl?: string;
+  publishNow?: boolean;
+}
+
+export interface WorkspaceContentEntryUpdatePayload {
+  entryId: string;
+  directoryId?: string | null;
+  title?: string;
+  description?: string;
+  body?: Record<string, unknown>;
+  tags?: string[];
+  ownerName?: string;
+  avatarUrl?: string;
+}
+
+export interface WorkspaceContentEntryByIdPayload {
+  entryId: string;
+}
+
+export interface WorkspaceContentEntryPublishPayload {
+  entryId: string;
+}
+
+export interface WorkspaceContentEntryDeletePayload {
+  entryId: string;
+}
