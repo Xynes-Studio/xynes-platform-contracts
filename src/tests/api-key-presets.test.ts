@@ -45,13 +45,27 @@ describe("WORKSPACE_API_KEY_PRESET_KEYS — stability contract", () => {
     >();
   });
 
-  it("freezes the array to prevent mutation by consumers (defense in depth)", () => {
-    // The `as const` makes the element type readonly at compile time. The
-    // runtime tuple is also frozen by V8 because TS emits a literal with
-    // `Object.freeze` semantics for `as const` arrays in some build chains;
-    // even without explicit freezing, mutation should never be attempted.
+  it("is frozen at runtime so consumers cannot mutate the canonical contract", () => {
+    // The `as const` makes the element TYPE readonly at compile time but does
+    // NOT call `Object.freeze` at runtime. The canonical export wraps the
+    // tuple in `Object.freeze` so a hostile or buggy consumer cannot
+    // mutate the contract via `WORKSPACE_API_KEY_PRESET_KEYS.push("evil")`,
+    // `[0] = "evil"`, or `length = 0`.
     expect(Array.isArray(WORKSPACE_API_KEY_PRESET_KEYS)).toBe(true);
     expect(WORKSPACE_API_KEY_PRESET_KEYS.length).toBe(5);
+    expect(Object.isFrozen(WORKSPACE_API_KEY_PRESET_KEYS)).toBe(true);
+
+    // Defense-in-depth: in strict mode, mutating a frozen array throws a
+    // TypeError. We assert the mutation IS rejected so the test fails loudly
+    // if someone removes the `Object.freeze` wrap upstream. Cast to a mutable
+    // shape so the assertion targets the runtime behaviour, not the type.
+    const mutable = WORKSPACE_API_KEY_PRESET_KEYS as unknown as string[];
+    expect(() => mutable.push("evil_preset")).toThrow(TypeError);
+    expect(() => {
+      mutable[0] = "evil_preset";
+    }).toThrow(TypeError);
+    expect(WORKSPACE_API_KEY_PRESET_KEYS.length).toBe(5);
+    expect(WORKSPACE_API_KEY_PRESET_KEYS[0]).toBe("cms_readonly");
   });
 
   it("contains no duplicate keys", () => {

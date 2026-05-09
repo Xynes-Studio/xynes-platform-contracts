@@ -43,17 +43,23 @@
 /**
  * The closed set of supported workspace API key preset keys (MVP).
  *
- * Order is informational and matches the order presented in the create-API-key
- * UI Select. Tests assert the *set* equality, not the order, but consumers
- * that copy this list should preserve order for UI parity.
+ * Order is part of the UI contract — the Workspace Admin's create-API-key
+ * `Select` renders options in this order. Tests assert BOTH order-sensitive
+ * equality AND set equality, so consumers that mirror this list must
+ * preserve order for UI parity.
+ *
+ * Defense-in-depth: the array is `Object.freeze`d at module load so a
+ * hostile or buggy consumer cannot mutate the canonical contract at
+ * runtime (e.g. `WORKSPACE_API_KEY_PRESET_KEYS.push("evil")`). Compile-time
+ * `as const` only enforces a readonly *type*, not runtime immutability.
  */
-export const WORKSPACE_API_KEY_PRESET_KEYS = [
+export const WORKSPACE_API_KEY_PRESET_KEYS = Object.freeze([
   "cms_readonly",
   "cms_authoring",
   "cms_publisher",
   "telemetry_read",
   "workspace_admin",
-] as const;
+] as const);
 
 /**
  * Discriminated string type for a recognized workspace API key preset.
