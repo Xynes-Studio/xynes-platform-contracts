@@ -86,6 +86,44 @@ const createDoc: ActionHandler<CreateDocPayload, CreateDocResult> = async (paylo
   - `BlogEntry*` types
   - `CmsContentTypesListForWorkspace*` types
 
+### 4. Workspace Admin Integrations (PFU-6)
+
+The MVP allowlist of workspace API key preset keys is published from
+`@xynes/platform-contracts` as the single source of truth shared between the
+backend (`xynes-accounts-service`), the Workspace Admin UI
+(`xynes-front-end/xynes-auth-app`), and the CMS console
+(`xynes-front-end/xynes-cms-console-web`).
+
+```typescript
+import {
+  WORKSPACE_API_KEY_PRESET_KEYS,
+  isWorkspaceApiKeyPresetKey,
+  type WorkspaceApiKeyPresetKey,
+} from "@xynes/platform-contracts";
+
+// Compile-time narrowing via the closed union.
+const preset: WorkspaceApiKeyPresetKey = "cms_readonly";
+
+// Runtime allowlist guard at the network boundary.
+function parsePreset(input: unknown): WorkspaceApiKeyPresetKey {
+  if (!isWorkspaceApiKeyPresetKey(input)) {
+    throw new Error("INVALID_PRESET");
+  }
+  return input;
+}
+```
+
+The preset → action-key scope mapping is server-only (it encodes authz
+wiring) and lives in `xynes-accounts-service` as `WORKSPACE_API_KEY_PRESETS`.
+Only the *list of keys* is part of this cross-package contract.
+
+Each consumer keeps a small local mirror of `WORKSPACE_API_KEY_PRESET_KEYS`
+plus a contract test that asserts parity, because the consumer repos do not
+yet npm-link to this package directly. See
+`xynes-platform-contracts/src/integrations/api-key-presets.ts` for the
+canonical list and the per-repo `*-preset-keys.contract.test.ts` files for
+the parity guards.
+
 ## Development
 
 ### Build
