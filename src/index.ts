@@ -13,3 +13,6 @@ export * from "./envelope";
 
 // Internal JWT authentication (SEC-INTERNAL-AUTH-2)
 export * from "./security/internal-jwt";
+
+// Workspace Admin Integrations — API key preset keys (PFU-6)
+export * from "./integrations/api-key-presets";
