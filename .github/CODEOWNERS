@@ -1,0 +1,11 @@
+# Default reviewers for everything
+*                          @REPLACE_WITH_PLATFORM_TEAM
+
+# Specific paths (uncomment what applies)
+# /src/envelope.ts             @REPLACE_WITH_PLATFORM_TEAM
+# /src/errors/                 @REPLACE_WITH_SECURITY_TEAM
+# /src/actions/                @REPLACE_WITH_PLATFORM_TEAM
+# /src/integrations/           @REPLACE_WITH_SECURITY_TEAM
+# /src/security/               @REPLACE_WITH_SECURITY_TEAM
+# /src/tests/                  @REPLACE_WITH_PLATFORM_TEAM
+# /.github/                    @REPLACE_WITH_PLATFORM_TEAM
