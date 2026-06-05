@@ -1,0 +1,11 @@
+# Default reviewers for everything
+*                          @archan96
+
+# Specific paths (uncomment what applies)
+# /src/envelope.ts             @archan96
+# /src/errors/                 @archan96
+# /src/actions/                @archan96
+# /src/integrations/           @archan96
+# /src/security/               @archan96
+# /src/tests/                  @archan96
+# /.github/                    @archan96
