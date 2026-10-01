@@ -129,13 +129,19 @@ export type CmsDeliveryEntryResponse = z.infer<typeof CmsDeliveryEntryResponseSc
 /** Delivery's 400/404 examples; gateway auth/transient errors use ApiError. */
 export const CmsDeliveryErrorResponseSchema = z.object({
   ok: z.literal(false),
-  error: z.object({
-    code: z.enum([CMS_DELIVERY_CONTRACT.errors.unavailable.code, CMS_DELIVERY_CONTRACT.errors.invalidInput.code]),
-    message: z.string().min(1),
-    details: z.object({
-      issues: z.array(z.object({
-        path: z.array(z.union([z.string(), z.number()])), message: z.string(), code: z.string().optional(),
-      }).strict()).optional(),
-    }).strict().optional(),
-  }).strict(), meta,
+  error: z.discriminatedUnion('code', [
+    z.object({
+      code: z.literal(CMS_DELIVERY_CONTRACT.errors.unavailable.code),
+      message: z.literal(CMS_DELIVERY_CONTRACT.errors.unavailable.message),
+    }).strict(),
+    z.object({
+      code: z.literal(CMS_DELIVERY_CONTRACT.errors.invalidInput.code),
+      message: z.string().min(1),
+      details: z.object({
+        issues: z.array(z.object({
+          path: z.array(z.union([z.string(), z.number()])), message: z.string(), code: z.string().optional(),
+        }).strict()).optional(),
+      }).strict().optional(),
+    }).strict(),
+  ]), meta,
 }).strict();

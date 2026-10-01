@@ -145,6 +145,28 @@ describe('CMS-INT-A1 delivery contract', () => {
     expectTypeOf<contracts.CmsDeliveryActionKey>().toEqualTypeOf<'cms.delivery.listByDirectory' | 'cms.delivery.getById'>();
   });
 
+  it('binds unavailable errors to the exact generic payload without details', () => {
+    const schema = contracts.CmsDeliveryErrorResponseSchema;
+    const unavailable = contracts.CMS_DELIVERY_CONTRACT.errors.unavailable;
+    const generic = { code: unavailable.code, message: unavailable.message };
+    expect(schema.parse({ ok: false, error: generic })).toEqual({ ok: false, error: generic });
+    expect(schema.safeParse({ ok: false, error: generic, meta: { requestId: 'fixture-request' } }).success).toBe(true);
+    for (const error of [
+      { ...generic, message: 'Entry exists but is unpublished' },
+      { ...generic, details: {} },
+      { ...generic, details: { issues: [{ path: ['entryId'], message: 'Private entry exists' }] } },
+    ]) expect(schema.safeParse({ ok: false, error }).success).toBe(false);
+  });
+
+  it('preserves validation messages and issue details in the distinct validation variant', () => {
+    const error = {
+      code: 'VALIDATION_ERROR', message: 'Invalid delivery request',
+      details: { issues: [{ path: ['fields', 0], message: 'Invalid delivery fields', code: 'custom' }] },
+    };
+    expect(contracts.CmsDeliveryErrorResponseSchema.parse({ ok: false, error })).toEqual({ ok: false, error });
+    expect(contracts.CmsDeliveryErrorResponseSchema.safeParse({ ok: false, error: { ...error, code: 'UNKNOWN' } }).success).toBe(false);
+  });
+
   it('matches the checked-in metadata and its SHA-256 digest exactly', () => {
     const bytes = readFileSync('contracts/cms-delivery.v1.json', 'utf8');
     expect(JSON.parse(bytes)).toEqual(contracts.CMS_DELIVERY_CONTRACT);

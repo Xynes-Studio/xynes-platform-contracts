@@ -5,6 +5,7 @@ import {
   CMS_DELIVERY_CONTRACT,
   CmsDeliveryDirectoryPayloadSchema,
   CmsDeliveryEntrySchema,
+  CmsDeliveryErrorResponseSchema,
   CmsDeliveryListResponseSchema,
   createValidationErrorResponse,
   formatZodError,
@@ -47,9 +48,18 @@ const invalidDelivery = CmsDeliveryDirectoryPayloadSchema.safeParse({ directoryI
 assert.equal(invalidDelivery.success, false);
 if (!invalidDelivery.success) {
   const error = createValidationErrorResponse(invalidDelivery.error, 'fixture-request');
+  assert.deepEqual(CmsDeliveryErrorResponseSchema.parse(error), error);
   assert.equal(error.error.code, 'VALIDATION_ERROR');
   assert.deepEqual(error.error.details?.issues?.[0].path, ['limit']);
 }
+const unavailable = { ok: false, error: {
+  code: CMS_DELIVERY_CONTRACT.errors.unavailable.code,
+  message: CMS_DELIVERY_CONTRACT.errors.unavailable.message,
+} };
+assert.deepEqual(CmsDeliveryErrorResponseSchema.parse(unavailable), unavailable);
+assert.equal(CmsDeliveryErrorResponseSchema.safeParse({
+  ...unavailable, error: { ...unavailable.error, details: {} },
+}).success, false);
 // Existing users may also pass errors from their installed root Zod version.
 const invalidUser = z.object({ title: z.string().min(1) }).safeParse({ title: '' });
 assert.equal(invalidUser.success, false);
