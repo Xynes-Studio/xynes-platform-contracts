@@ -1,3 +1,5 @@
+import type { CmsDeliveryState } from "../integrations/cms-delivery";
+
 export interface BlogEntryData {
   slug: string;
   title: string;
@@ -83,6 +85,8 @@ export interface WorkspaceContentEntry {
   updatedAt: string;
   collaborators: string[];
   isFavorite: boolean;
+  /** Publication availability only; absent on pre-integration servers. */
+  deliveryState?: CmsDeliveryState;
 }
 
 export interface WorkspaceContentEntriesListPayload {
@@ -133,3 +137,8 @@ export interface WorkspaceContentEntryPublishPayload {
 export interface WorkspaceContentEntryDeletePayload {
   entryId: string;
 }
+
+export type {
+  CmsDeliveryActionKey, CmsDeliveryDirectoryPayload, CmsDeliveryEntryPayload,
+  CmsDeliveryListResult, CmsDeliveryEntryResult, CmsDeliveryState,
+} from "../integrations/cms-delivery";

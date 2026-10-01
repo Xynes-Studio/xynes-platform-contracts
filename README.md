@@ -12,7 +12,7 @@ This library provides:
 
 It is designed to be:
 -   **Framework Agnostic**: No bindings to Hono, Express, or any DB.
--   **Lightweight**: Only TypeScript definitions and error classes.
+-   **Lightweight**: TypeScript definitions, error classes, and Zod validators.
 
 ## Installation
 
@@ -35,7 +35,7 @@ import {
 } from '@xynes/platform-contracts';
 
 // Throwing errors
-function validateUser(input: any) {
+function validateUser(input: { email?: string }) {
   if (!input.email) {
     throw new ValidationError('Email is required', { field: 'email' });
   }
@@ -124,6 +124,10 @@ yet npm-link to this package directly. See
 canonical list and the per-repo `*-preset-keys.contract.test.ts` files for
 the parity guards.
 
+### 5. CMS delivery (CMS-INT-A1)
+
+The versioned, snapshot-only delivery specification exports `CMS_DELIVERY_CONTRACT`, strict request/response schemas and inferred DTOs. The JSON artifact and SHA-256 digest support consumers that keep a checked-in mirror. See [the contract guide](docs/cms-delivery-contract.md) for routes, bounds, publication semantics, fixtures and handoff requirements. Schemas use `zod/v3` for a stable runtime/type API with Zod 3 and 4 peers; use that subpath when composing them. This package does not enable endpoints or grant scopes.
+
 ## Development
 
 ### Build
@@ -136,6 +140,11 @@ pnpm build
 
 ```bash
 pnpm test
+pnpm test:coverage
+pnpm test:peers
+pnpm lint
+pnpm typecheck
+pnpm contracts:check
 ```
 
 ## Contributing

@@ -6,10 +6,15 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tools.json --noEmit",
+    "test:coverage": "vitest run --coverage",
+    "contracts:export": "tsc -p tsconfig.tools.json && node .contract-tools/scripts/export-cms-delivery-contract.js",
+    "contracts:check": "tsc -p tsconfig.tools.json && node .contract-tools/scripts/export-cms-delivery-contract.js --check",
+    "test:peers": "vitest run scripts/tests/cms-delivery-peers.test.ts"
   },
   "peerDependencies": {
-    "zod": "^3.0.0 || ^4.0.0"
+    "zod": "^3.25.76 || ^4.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -19,7 +24,8 @@
     "typescript": "^5.3.3",
     "typescript-eslint": "8.49.0",
     "vitest": "^1.2.1",
-    "zod": "^3.23.8"
+    "zod": "^3.25.76",
+    "zod4": "npm:zod@4.4.3"
   },
   "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
+import { z as z4 } from 'zod4';
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -96,7 +97,16 @@ describe('Envelope Utilities', () => {
 
       expect(formatted.issues).toHaveLength(1);
       expect(formatted.issues![0].path).toEqual(['email']);
-      expect(formatted.issues![0].code).toBe('invalid_string');
+      expect(formatted.issues![0].code).toBe(result.error.issues[0].code);
+    });
+
+    it('formats Zod 4 errors without leaking symbol path descriptions', () => {
+      const privateSegment = Symbol('private-path-description');
+      const error = new z4.ZodError([{ code: 'custom', path: [privateSegment, 'field', 0], message: 'Invalid value' }]);
+      const formatted = formatZodError(error);
+      expect(formatted.issues).toEqual([{ code: 'custom', path: ['[symbol]', 'field', 0], message: 'Invalid value' }]);
+      expect(error.issues[0].path[0]).toBe(privateSegment);
+      expect(JSON.stringify(formatted)).not.toContain('private-path-description');
     });
 
     it('should format nested Zod error', () => {
@@ -140,7 +150,7 @@ describe('Envelope Utilities', () => {
 
       const formatted = formatZodError(result.error);
 
-      expect(formatted.issues![0].message).toBe('Required');
+      expect(formatted.issues![0].message).toBe(result.error.issues[0].message);
       expect(formatted.issues![0].path).toEqual(['type']);
     });
   });

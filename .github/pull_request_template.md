@@ -30,11 +30,14 @@
 
 ## Repo-specific items (xynes-platform-contracts)
 
-This is the **TypeScript-only shared contracts** package consumed by every service and the FE SDK. It has **no runtime, no DB, no HTTP** — just typed action envelopes, error codes, and integration types (e.g. `WORKSPACE_API_KEY_PRESET_KEYS` from PFU-6).
+This is the **TypeScript-only shared contracts** package consumed by every service and the FE SDK. It has **no DB or HTTP layer** — it provides typed action envelopes, error codes, integration metadata and small runtime helpers/validators (including CMS delivery schemas).
 
-- [ ] Lint: `bun run lint` (eslint over all `.ts` files)
-- [ ] Tests: `bun run test` (vitest run)
-- [ ] Build: `bun run build` (`tsc -p tsconfig.json`) — every PR MUST verify `dist/` rebuilds cleanly because every consumer (`xynes-gateway`, `xynes-accounts-service`, `xynes-auth-sdk`, etc.) imports from this package's published types.
+- [ ] Lint: `pnpm lint` (eslint over all `.ts` files)
+- [ ] Tests: `pnpm test` (vitest run) and `pnpm test:coverage` (configured per-file 80% gate)
+- [ ] Typecheck: `pnpm typecheck`
+- [ ] Delivery artifact: `pnpm contracts:check`
+- [ ] `pnpm test:peers` passes: the same built declarations typecheck and run with both supported installed peers, using consumer `skipLibCheck: false`
+- [ ] Build: `pnpm build` (`tsc -p tsconfig.json`) — every PR MUST verify `dist/` rebuilds cleanly because every consumer (`xynes-gateway`, `xynes-accounts-service`, `xynes-auth-sdk`, etc.) imports from this package's published types.
 - [ ] **Cross-package contract changes MUST land here FIRST** (per PFU-6 precedent: closed-set `WorkspaceApiKeyPresetKey` union + `isWorkspaceApiKeyPresetKey` guard). Consumers in `xynes-accounts-service`, `xynes-auth-app`, and `xynes-cms-console-web` each keep a local mirror plus a `*-preset-keys.contract.test.ts` parity guard. Adding a new contract entry requires updating: (1) this package's canonical export; (2) every consumer's mirror; (3) every consumer's parity test. Without lockstep updates, the parity guards will fail in CI.
 - [ ] **Action envelope shape is frozen.** Changes to `envelope.ts` (the `{ ok, data, meta }` discriminated envelope) MUST be backwards-compatible — every FE client uses `unwrapGatewayEnvelope`, and a breaking shape change would brick every gateway-reachable action across the entire workspace. If a breaking change is genuinely needed, file a separate epic plan first.
 - [ ] **Closed-set error codes only.** New `errors/*` entries land as additions to the existing closed-set unions. The closed-set posture is what lets the gateway redaction + every consumer parser stay safe — a free-form string would defeat both.
