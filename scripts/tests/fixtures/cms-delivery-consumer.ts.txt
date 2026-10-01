@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+import { z } from 'zod';
+import { z as z3 } from 'zod/v3';
+import {
+  CMS_DELIVERY_CONTRACT,
+  CmsDeliveryDirectoryPayloadSchema,
+  CmsDeliveryEntrySchema,
+  CmsDeliveryErrorResponseSchema,
+  CmsDeliveryListResponseSchema,
+  createValidationErrorResponse,
+  formatZodError,
+  type ApiSuccess,
+  type CmsDeliveryActionKey,
+  type CmsDeliveryDirectoryPayload,
+  type CmsDeliveryDirectoryOptions,
+  type CmsDeliveryListItem,
+  type CmsDeliveryListResult,
+} from './package/index';
+
+type Assert<T extends true> = T;
+type IsAny<T> = 0 extends (1 & T) ? true : false;
+export type ConsumerTypeChecks = [
+  Assert<IsAny<CmsDeliveryDirectoryPayload> extends false ? true : false>,
+  Assert<IsAny<CmsDeliveryDirectoryOptions> extends false ? true : false>,
+  Assert<IsAny<CmsDeliveryDirectoryOptions['fields'][number]> extends false ? true : false>,
+  Assert<Extract<keyof CmsDeliveryListItem, 'body' | 'createdBy' | 'data'> extends never ? true : false>,
+  Assert<CmsDeliveryActionKey extends 'cms.delivery.listByDirectory' | 'cms.delivery.getById' ? true : false>,
+];
+const directoryId = '22222222-2222-4222-8222-222222222222';
+const entryId = '11111111-1111-4111-8111-111111111111';
+const input: CmsDeliveryDirectoryPayload = { directoryId, fields: 'title' };
+const parsed: CmsDeliveryDirectoryOptions = CmsDeliveryDirectoryPayloadSchema.parse(input);
+const limit: number = parsed.limit;
+assert.equal(limit, 20);
+assert.deepEqual(parsed.fields, ['id', 'title']);
+assert.equal(CMS_DELIVERY_CONTRACT.publication, 'snapshot');
+assert.deepEqual(z3.object({ entry: CmsDeliveryEntrySchema }).parse({ entry: { id: entryId } }), { entry: { id: entryId } });
+
+const response: ApiSuccess<CmsDeliveryListResult> = CmsDeliveryListResponseSchema.parse({
+  ok: true, data: { items: [{ id: entryId }], page: { limit: 20, offset: 0, hasMore: false } },
+});
+assert.equal(response.data.items[0].id, entryId);
+assert.deepEqual(CmsDeliveryEntrySchema.parse({ id: entryId, body: { values: [null, true, 1] } }).body, { values: [null, true, 1] });
+assert.equal(CmsDeliveryDirectoryPayloadSchema.safeParse({ directoryId, fields: 'createdBy' }).success, false);
+
+// Delivery errors must work with the package's existing envelope helpers.
+const invalidDelivery = CmsDeliveryDirectoryPayloadSchema.safeParse({ directoryId, limit: 0 });
+assert.equal(invalidDelivery.success, false);
+if (!invalidDelivery.success) {
+  const error = createValidationErrorResponse(invalidDelivery.error, 'fixture-request');
+  assert.deepEqual(CmsDeliveryErrorResponseSchema.parse(error), error);
+  assert.equal(error.error.code, 'VALIDATION_ERROR');
+  assert.deepEqual(error.error.details?.issues?.[0].path, ['limit']);
+}
+const unavailable = { ok: false, error: {
+  code: CMS_DELIVERY_CONTRACT.errors.unavailable.code,
+  message: CMS_DELIVERY_CONTRACT.errors.unavailable.message,
+} };
+assert.deepEqual(CmsDeliveryErrorResponseSchema.parse(unavailable), unavailable);
+assert.equal(CmsDeliveryErrorResponseSchema.safeParse({
+  ...unavailable, error: { ...unavailable.error, details: {} },
+}).success, false);
+// Existing users may also pass errors from their installed root Zod version.
+const invalidUser = z.object({ title: z.string().min(1) }).safeParse({ title: '' });
+assert.equal(invalidUser.success, false);
+if (!invalidUser.success) {
+  assert.deepEqual(formatZodError(invalidUser.error).issues?.[0].path, ['title']);
+  assert.equal(createValidationErrorResponse(invalidUser.error).error.code, 'VALIDATION_ERROR');
+}

@@ -16,3 +16,6 @@ export * from "./security/internal-jwt";
 
 // Workspace Admin Integrations — API key preset keys (PFU-6)
 export * from "./integrations/api-key-presets";
+
+// CMS Content Integrations — snapshot-backed delivery specification (CMS-INT-A1)
+export * from "./integrations/cms-delivery";

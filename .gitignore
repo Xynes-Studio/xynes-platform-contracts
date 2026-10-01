@@ -5,3 +5,5 @@ coverage
 .env
 .env.localhost
 .env.dev
+
+.contract-tools/

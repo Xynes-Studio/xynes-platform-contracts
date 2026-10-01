@@ -3,7 +3,14 @@
  * Provides consistent response structure across all platform services.
  */
 
-import type { ZodError, ZodIssue } from 'zod';
+/** Minimal error shape shared by Zod 3 and 4; independent of their class types. */
+export interface ZodErrorLike {
+  readonly issues: readonly {
+    readonly path: readonly PropertyKey[];
+    readonly message: string;
+    readonly code: string;
+  }[];
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -104,10 +111,11 @@ export function createErrorResponse(
  * Formats a Zod error into the standard ApiErrorDetails shape.
  * Extracts field paths and messages for client-friendly validation feedback.
  */
-export function formatZodError(error: ZodError): ApiErrorDetails {
+export function formatZodError(error: ZodErrorLike): ApiErrorDetails {
   return {
-    issues: error.issues.map((issue: ZodIssue) => ({
-      path: issue.path,
+    issues: error.issues.map((issue) => ({
+      // Symbol descriptions may contain private data and cannot appear in JSON paths.
+      path: issue.path.map((segment) => typeof segment === 'symbol' ? '[symbol]' : segment),
       message: issue.message,
       code: issue.code,
     })),
@@ -119,7 +127,7 @@ export function formatZodError(error: ZodError): ApiErrorDetails {
  * Convenience function combining createErrorResponse with formatZodError.
  */
 export function createValidationErrorResponse(
-  error: ZodError,
+  error: ZodErrorLike,
   requestId?: string,
   message = 'Payload validation failed'
 ): ApiError {
