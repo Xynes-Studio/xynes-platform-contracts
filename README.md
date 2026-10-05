@@ -152,3 +152,16 @@ pnpm contracts:check
 -   **Segregation**: Keep actions and errors in their respective folders.
 -   **Testing**: Maintain >80% coverage.
 -   **Standards**: Follow TDD and use standard ESLint rules.
+
+## Bound internal requests
+
+`src/security/internal-request.ts` is the canonical Ed25519 request protocol and
+explicit receiver/caller capability policy. Edit it here, run
+`corepack pnpm internal-request:export`, then `corepack pnpm internal-request:check`
+from this checkout with all backend sibling repositories present. Seven runtime
+mirrors and four consumer crypto suites are generated, checked and committed in
+their owning repositories. Receiver catalog tests protect production action parity.
+The full contract coverage gate and each receiver's tests validate consumption
+with its installed Zod version. Coordinate all seven runtime deployments with
+owner-only signing mounts and receiver-specific public trust files; see infra's
+`infra/release/INTERNAL-REQUEST-IDENTITIES.md`. No shared-token fallback remains.
