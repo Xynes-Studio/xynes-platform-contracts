@@ -159,7 +159,7 @@ pnpm contracts:check
 explicit receiver/caller capability policy. Edit it here, run
 `corepack pnpm internal-request:export`, then `corepack pnpm internal-request:check`
 from this checkout with all backend sibling repositories present. Seven runtime
-mirrors and four consumer crypto suites are generated, checked and committed in
+mirrors and six crypto suites across five consumers are generated, checked and committed in
 their owning repositories. Receiver catalog tests protect production action parity.
 The full contract coverage gate and each receiver's tests validate consumption
 with its installed Zod version. Coordinate all seven runtime deployments with
