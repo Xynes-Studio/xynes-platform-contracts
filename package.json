@@ -11,7 +11,9 @@
     "test:coverage": "vitest run --coverage",
     "contracts:export": "tsc -p tsconfig.tools.json && node .contract-tools/scripts/export-cms-delivery-contract.js",
     "contracts:check": "tsc -p tsconfig.tools.json && node .contract-tools/scripts/export-cms-delivery-contract.js --check",
-    "test:peers": "vitest run scripts/tests/cms-delivery-peers.test.ts"
+    "test:peers": "vitest run scripts/tests/cms-delivery-peers.test.ts",
+    "internal-request:export": "tsc -p tsconfig.tools.json && node .contract-tools/scripts/export-internal-request.js",
+    "internal-request:check": "tsc -p tsconfig.tools.json && node .contract-tools/scripts/export-internal-request.js --check"
   },
   "peerDependencies": {
     "zod": "^3.25.76 || ^4.0.0"

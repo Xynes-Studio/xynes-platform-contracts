@@ -19,3 +19,6 @@ export * from "./integrations/api-key-presets";
 
 // CMS Content Integrations — snapshot-backed delivery specification (CMS-INT-A1)
 export * from "./integrations/cms-delivery";
+
+// Bound service identities and explicit receiver capabilities (SEC-003-FU-1)
+export * from './security/internal-request';
