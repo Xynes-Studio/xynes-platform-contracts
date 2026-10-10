@@ -165,3 +165,10 @@ The full contract coverage gate and each receiver's tests validate consumption
 with its installed Zod version. Coordinate all seven runtime deployments with
 owner-only signing mounts and receiver-specific public trust files; see infra's
 `infra/release/INTERNAL-REQUEST-IDENTITIES.md`. No shared-token fallback remains.
+
+
+### CMS compound publication policy
+
+`cmsPublicationPermissions(actionKey, payload)` projects the additional publish/withdraw permissions for supported CMS compound effects. It strictly rejects non-boolean controls, conflicting metadata flags, invalid timestamps and non-string statuses; complete payload schemas remain service-owned. The gateway resolves permissions from the exact merged payload before signing, and CMS checks them before mutation. Approvals are bounded inside the existing signed body, never a client scope header.
+
+Run `pnpm cms-policy:export` after changing the canonical implementation or `src/tests/cms-publication-policy.test.ts`. It exports exact implementation and native Bun test mirrors into gateway and CMS. `pnpm cms-policy:check` requires those sibling checkouts and detects drift without rewriting. Each consumer runs the canonical contract cases in its ordinary test suite; the exporter has its own drift/refusal regression tests. This contract does not modify role grants or older keys. See infra `docs/deployment/cms-integration-policy.md` for compatibility order and pending policy decisions.
