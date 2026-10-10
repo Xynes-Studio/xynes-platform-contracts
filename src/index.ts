@@ -22,3 +22,4 @@ export * from "./integrations/cms-delivery";
 
 // Bound service identities and explicit receiver capabilities (SEC-003-FU-1)
 export * from './security/internal-request';
+export * from './integrations/cms-publication-policy';
